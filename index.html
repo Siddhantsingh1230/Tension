@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+  <head>
+
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    <title>Tension</title>
+
+    <meta name="description" content="Simple Slingshot Game ">
+
+    <meta name="author" content="Siddhant Singh">
+
+    <style type="text/css" media="all">
+
+      * {
+
+        margin: 0px;
+
+        padding: 0px;
+
+      }
+
+      #counter {
+
+        position: fixed;
+
+        left: 5vw;
+
+        bottom: 3vh;
+
+        color: lightskyblue;
+
+        font-size: 8vw;
+
+        font-weight: bold;
+
+      }
+
+      #ballcounter {
+
+        position: fixed;
+
+        right: 5vw;
+
+        bottom: 3vh;
+
+        color: deeppink;
+
+        font-size: 8vw;
+
+        font-weight: bold;
+
+      }
+
+    </style>
+
+    <script
+
+      src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.18.0/matter.min.js"
+
+      integrity="sha512-5T245ZTH0m0RfONiFm2NF0zcYcmAuNzcGyPSQ18j8Bs5Pbfhp5HP1hosrR8XRt5M3kSRqzjNMYpm2+it/AUX/g=="
+
+      crossorigin="anonymous"
+
+      referrerpolicy="no-referrer"
+
+    ></script>
+
+  </head>
+
+  <body>
+
+    <div id="counter">0</div>
+
+    <div id="ballcounter">0</div>
+
+    <script type="text/javascript" charset="utf-8">
+
+      let counter = document.getElementById("counter");
+
+      let count = 0;
+
+      let ballcounter = document.getElementById("ballcounter");
+
+      let ballcount = 0;
+
+      let engine = Matter.Engine.create();
+
+      let render = Matter.Render.create({
+
+        element: document.body,
+
+        engine: engine,
+
+        options: {
+
+          width: window.innerWidth,
+
+          height: window.innerHeight,
+
+          wireframes: false,
+
+          background: "rgb(0,0,0)",
+
+        },
+
+        render: {
+
+          fillStyle: "red",
+
+          strokeStyle: "blue",
+
+          lineWidth: 3,
+
+        },
+
+      });
+
+      function randomcolor() {
+
+        var randomColor = (Math.random() * 256).toFixed(0);
+
+        return randomColor;
+
+      }
+
+      let posx=Number((window.innerWidth/2).toFixed(0));
+
+      console.log(posx);
+
+      let ball = Matter.Bodies.circle(posx, 500, 20, {
+
+        collisionFilter: {
+
+          category: 0x0002,
+
+          mask: 0x0001,
+
+        },
+
+      });
+
+      let sling = Matter.Constraint.create({
+
+        pointA: { x: 180, y: 500 },
+
+        bodyB: ball,
+
+        stiffness: 0.05,
+
+      });
+
+      let target = Matter.Bodies.rectangle(
+
+        window.innerWidth - 20,
+
+        Math.random() * window.innerHeight,
+
+        15,
+
+        15,
+
+        {
+
+          isStatic: true,
+
+          render: {
+
+            fillStyle: "lightskyblue",
+
+          },
+
+          collisionFilter: {
+
+            category: 0x0001,
+
+            mask: 0x0002,
+
+          },
+
+        }
+
+      );
+
+      let mouse = Matter.Mouse.create(render.canvas);
+
+      let mouseConstraint = Matter.MouseConstraint.create(engine, {
+
+        mouse: mouse,
+
+        constraint: {
+
+          render: { visible: false },
+
+        },
+
+      });
+
+      render.mouse = mouse;
+
+      let firing = false;
+
+      Matter.Events.on(mouseConstraint, "enddrag", function (e) {
+
+        if (e.body === ball) firing = true;
+
+      });
+
+      Matter.Events.on(engine, "afterUpdate", function () {
+
+        if (
+
+          firing &&
+
+          Math.abs(ball.position.x - 180) < 10 &&
+
+          Math.abs(ball.position.y - 500) < 10
+
+        ) {
+
+          ballcount++;
+
+          ballcounter.innerText = ballcount;
+
+          ball = Matter.Bodies.circle(180, 500, 20, {
+
+            collisionFilter: {
+
+              category: 0x0002,
+
+              mask: 0x0001,
+
+            },
+
+          });
+
+          Matter.World.add(engine.world, ball);
+
+          sling.bodyB = ball;
+
+          firing = false;
+
+        }
+
+      });
+
+      // listen for collisions
+
+      Matter.Events.on(engine, "collisionStart", function (event) {
+
+        count++;
+
+        counter.innerText = count;
+
+        Matter.World.remove(engine.world, target);
+
+        let tout = setTimeout(function () {
+
+          target = Matter.Bodies.rectangle(
+
+            Math.random() * window.innerWidth,
+
+            Math.random() * window.innerHeight,
+
+            15,
+
+            15,
+
+            {
+
+              isStatic: true,
+
+              render: {
+
+                fillStyle:
+
+                  "rgb(" +
+
+                  randomcolor() +
+
+                  "," +
+
+                  randomcolor() +
+
+                  "," +
+
+                  randomcolor() +
+
+                  ")",
+
+              },
+
+              collisionFilter: {
+
+                category: 0x0001,
+
+                mask: 0x0002,
+
+              },
+
+            }
+
+          );
+
+          Matter.World.add(engine.world, [target]);
+
+          clearTimeout(tout);
+
+        }, 600);
+
+      });
+
+      Matter.World.add(engine.world, [target, ball, sling, mouseConstraint]);
+
+      Matter.Runner.run(engine);
+
+      Matter.Render.run(render);
+
+    </script>
+
+  </body>
+
+</html>
+
