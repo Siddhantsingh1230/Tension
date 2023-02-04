@@ -131,8 +131,9 @@
         return randomColor;
 
       }
-
-      let ball = Matter.Bodies.circle(180, 500, 20, {
+      let y=2*(window.innerHeight)-window.innerHeight;
+      let x=2*(window.innerWidth)-window.innerWidth;
+      let ball = Matter.Bodies.circle(x, 500, 20, {
 
         collisionFilter: {
 
@@ -156,7 +157,7 @@
 
       let target = Matter.Bodies.rectangle(
 
-        window.innerWidth - 20,
+        window.innerWidth,
 
         Math.random() * window.innerHeight,
 
