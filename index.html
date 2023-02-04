@@ -132,7 +132,7 @@
 
       }
      // let y=2*(window.innerHeight)-window.innerHeight;
-      let posx=(window.innerWidth)/2;
+      let posx=Math.floor((window.innerWidth)/2);
       let ball = Matter.Bodies.circle(x, 500, 20, {
 
         collisionFilter: {
