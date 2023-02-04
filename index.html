@@ -147,7 +147,7 @@
 
       let sling = Matter.Constraint.create({
 
-        pointA: { x: x, y: 500 },
+        pointA: { x: posx, y: 500 },
 
         bodyB: ball,
 
@@ -217,7 +217,7 @@
 
           firing &&
 
-          Math.abs(ball.position.x - x) < 10 &&
+          Math.abs(ball.position.x - posx) < 10 &&
 
           Math.abs(ball.position.y - 500) < 10
 
@@ -227,7 +227,7 @@
 
           ballcounter.innerText = ballcount;
 
-          ball = Matter.Bodies.circle(180, 500, 20, {
+          ball = Matter.Bodies.circle(posx, 500, 20, {
 
             collisionFilter: {
 
