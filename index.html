@@ -131,7 +131,7 @@
         return randomColor;
 
       }
-      let y=2*(window.innerHeight)-window.innerHeight;
+     // let y=2*(window.innerHeight)-window.innerHeight;
       let x=2*(window.innerWidth)-window.innerWidth;
       let ball = Matter.Bodies.circle(x, 500, 20, {
 
@@ -147,7 +147,7 @@
 
       let sling = Matter.Constraint.create({
 
-        pointA: { x: 180, y: 500 },
+        pointA: { x: x, y: 500 },
 
         bodyB: ball,
 
@@ -217,7 +217,7 @@
 
           firing &&
 
-          Math.abs(ball.position.x - 180) < 10 &&
+          Math.abs(ball.position.x - x) < 10 &&
 
           Math.abs(ball.position.y - 500) < 10
 
